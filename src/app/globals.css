@@ -1,43 +1,465 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --accent: #a78bfa;
+  --fg: #ece8f4;
+  --fg-soft: #c9c3d6;
+  --muted: #9a93ab;
+  --dim: #6f6884;
+  --line: #1f1933;
+  --edge: #2e2548;
+  --edge-strong: #3b2f5c;
+  --tag: #c4b5fd;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html {
+  scroll-behavior: smooth;
+  background: #000;
 }
 
 body {
-  background-color: black;
+  margin: 0;
+  background: #000;
+  color: var(--fg);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Page shell shared by every route */
+.space {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: #000;
+  color: var(--fg);
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  text-transform: lowercase;
+}
+
+.space a {
+  color: var(--tag);
+}
+.space a:hover {
+  color: #fff;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+/* Blinking terminal cursor */
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 6px;
+  vertical-align: -0.12em;
+  background: var(--accent);
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }
 
-.UVGmr {
-  overflow-y: visible !important;
+/* Starfield */
+.stars {
+  position: absolute;
+  inset: -40px;
+  pointer-events: none;
+  transition:
+    transform 2s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 400ms linear;
+}
+.star {
+  position: absolute;
+  background: #fff;
+}
+.tw {
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle {
+  50% {
+    opacity: 0.05;
+  }
 }
 
-.card-description::after {
-  display: none !important;
-  overflow-y: visible !important;
+/* Cursor glyph trail. Each slot flips between an "a" and "b" keyframe so a
+   recycled slot always restarts its animation. */
+.trail {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.pt {
+  position: absolute;
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-duration: 1.1s;
+  animation-timing-function: cubic-bezier(0.2, 0.6, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+.d1a { animation-name: d1a; }
+.d1b { animation-name: d1b; }
+.d2a { animation-name: d2a; }
+.d2b { animation-name: d2b; }
+.d3a { animation-name: d3a; }
+.d3b { animation-name: d3b; }
+.d4a { animation-name: d4a; }
+.d4b { animation-name: d4b; }
+@keyframes d1a { from { opacity: 1; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(calc(-50% - 18px), calc(-50% + 26px)); } }
+@keyframes d1b { from { opacity: 1; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(calc(-50% - 18px), calc(-50% + 26px)); } }
+@keyframes d2a { from { opacity: 1; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(calc(-50% + 16px), calc(-50% + 30px)); } }
+@keyframes d2b { from { opacity: 1; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(calc(-50% + 16px), calc(-50% + 30px)); } }
+@keyframes d3a { from { opacity: 0.9; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(calc(-50% - 6px), calc(-50% + 40px)) scale(0.6); } }
+@keyframes d3b { from { opacity: 0.9; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(calc(-50% - 6px), calc(-50% + 40px)) scale(0.6); } }
+@keyframes d4a { from { opacity: 0.8; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(calc(-50% + 24px), calc(-50% + 12px)); } }
+@keyframes d4b { from { opacity: 0.8; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(calc(-50% + 24px), calc(-50% + 12px)); } }
+
+/* Landing: hero box */
+.float {
+  animation: float 9s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(3px, -5px); }
+  50% { transform: translate(-2px, -8px); }
+  75% { transform: translate(-4px, -2px); }
 }
 
-.timeline-card-content {
-  /* cursor: pointer !important; */
-  overflow-y: visible !important;
-  height: fit-content !important;
-} 
+/* Exit transition: the box collapses to a line, then a point, like an old
+   screen switching off. */
+.off {
+  animation: crtoff 520ms cubic-bezier(0.6, 0, 0.3, 1) forwards !important;
+}
+@keyframes crtoff {
+  0% { transform: scale(1, 1); }
+  50% { transform: scale(1, 0.004); }
+  100% { transform: scale(0, 0.004); opacity: 0.2; }
+}
+.off .float {
+  animation: none;
+}
+.off .float > * {
+  opacity: 0;
+  transition: opacity 120ms linear;
+}
+
+/* Inverting menu rows */
+.space .opt {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  margin: 0 -20px;
+  color: var(--fg);
+  text-decoration: none;
+  transform-origin: left center;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear,
+    transform 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.space .opt:hover,
+.space .opt:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+  transform: scale(1.04);
+}
+
+.space .more {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear,
+    opacity 300ms linear;
+}
+.space .more:hover,
+.space .more:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+}
+.arrow {
+  display: block;
+  animation: bob 1.8s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* Landing: about section reveal */
+.rv {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.in .rv {
+  opacity: 1;
+  transform: none;
+}
+.rule {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 900ms cubic-bezier(0.6, 0, 0.2, 1);
+}
+.in .rule {
+  transform: scaleX(1);
+}
+
+.space .soc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--fg);
+  text-decoration: none;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear,
+    padding 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.space .soc:hover,
+.space .soc:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.soc-note {
+  color: var(--dim);
+  font-size: 13px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* Anything that inverts on hover takes its accents and muted text with it */
+.space .opt:hover .caret,
+.space .opt:focus-visible .caret,
+.space .more:hover .arrow,
+.space .more:focus-visible .arrow,
+.space .soc:hover .caret,
+.space .soc:focus-visible .caret,
+.space .soc:hover .soc-note,
+.space .soc:focus-visible .soc-note,
+.space .back:hover .caret,
+.space .back:focus-visible .caret,
+.space .chip:hover .caret,
+.space .chip:focus-visible .caret {
+  color: #000;
+}
+
+/* Experiences / projects */
+.space .back {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-left: -16px;
+  color: var(--fg);
+  text-decoration: none;
+  transform-origin: left center;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear,
+    transform 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.space .back:hover,
+.space .back:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+  transform: scale(1.04);
+}
+
+.entry {
+  border: 1px solid var(--edge);
+  background: rgba(0, 0, 0, 0.85);
+  transition:
+    border-color 160ms linear,
+    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.entry:hover {
+  transform: translateX(6px);
+  border-color: var(--edge-strong);
+}
+
+.tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--edge-strong);
+  color: var(--tag);
+}
+
+.space .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--edge-strong);
+  color: var(--fg);
+  text-decoration: none;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear;
+}
+.space .chip:hover,
+.space .chip:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+}
+
+.highlights {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.highlights li {
+  display: flex;
+  gap: 10px;
+}
+.highlights li::before {
+  content: "-";
+  color: var(--accent);
+  flex: none;
+}
+
+.deck-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--edge-strong);
+  background: #000;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear;
+}
+.deck-btn:hover,
+.deck-btn:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+}
+
+.rise {
+  opacity: 0;
+  animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Entry transition: two lids part along a glowing seam */
+.lid {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 50vh;
+  background: #000;
+  z-index: 50;
+  pointer-events: none;
+  animation: 0.65s cubic-bezier(0.7, 0, 0.2, 1) 0.32s forwards;
+}
+.lid-top {
+  top: 0;
+  animation-name: lidup;
+}
+.lid-bot {
+  bottom: 0;
+  animation-name: liddown;
+}
+@keyframes lidup {
+  to { transform: translateY(-100%); visibility: hidden; }
+}
+@keyframes liddown {
+  to { transform: translateY(100%); visibility: hidden; }
+}
+.seam {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 50vh;
+  height: 2px;
+  margin-top: -1px;
+  z-index: 51;
+  pointer-events: none;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  transform: scaleX(0);
+  animation: seam 0.95s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+}
+@keyframes seam {
+  0% { transform: scaleX(0); opacity: 1; }
+  33% { transform: scaleX(1); opacity: 1; }
+  55% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .tw,
+  .cursor,
+  .arrow,
+  .rise {
+    animation: none;
+    opacity: 1;
+  }
+  .space .opt:hover,
+  .space .opt:focus-visible,
+  .space .back:hover,
+  .space .back:focus-visible,
+  .entry:hover {
+    transform: none;
+  }
+  .rv,
+  .rule {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .lid,
+  .seam {
+    display: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
