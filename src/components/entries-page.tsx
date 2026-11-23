@@ -1,76 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Stars, Trail, useSpace } from "@/components/space";
+import PageShell, { BASE_DELAY } from "@/components/page-shell";
 import type { Entry } from "@/content";
 
-const ACCENT = "#a78bfa";
-// Entries start rising as the intro lids finish parting.
-const BASE_DELAY = 0.75;
-
 export default function EntriesPage({ title, summary, entries }: { title: string; summary: string; entries: Entry[] }) {
-  const space = useSpace({ accent: ACCENT });
-
   return (
-    <main className="space" onMouseMove={space.onMouseMove} onMouseLeave={space.onMouseLeave}>
-      <Stars count={90} sx={space.sx} sy={space.sy} />
-      <Trail parts={space.parts} />
-
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          maxWidth: 880,
-          margin: "0 auto",
-          boxSizing: "border-box",
-          padding: "clamp(40px, 8vw, 96px) 24px 120px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 56,
-        }}
-      >
-        <nav aria-label="breadcrumb" className="rise" style={{ animationDelay: `${BASE_DELAY}s` }}>
-          <Link className="back" href="/">
-            <span className="caret accent" aria-hidden="true">&lt;</span>
-            <span>back</span>
-          </Link>
-        </nav>
-
-        <header
-          className="rise"
-          style={{ animationDelay: `${BASE_DELAY + 0.07}s`, display: "flex", flexDirection: "column", gap: 16 }}
-        >
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "clamp(32px, 5vw, 52px)",
-              fontWeight: 500,
-              lineHeight: 1.15,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            <span className="accent">&gt;</span> {title}
-            <span className="cursor" aria-hidden="true" />
-          </h1>
-          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.7, color: "var(--muted)", maxWidth: "60ch" }}>
-            {summary}
-          </p>
-        </header>
-
-        <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-          {entries.map((entry, i) => (
-            <li key={entry.id} id={entry.id} className="rise" style={{ animationDelay: `${BASE_DELAY + 0.15 + i * 0.08}s` }}>
-              <EntryCard entry={entry} />
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="lid lid-top" aria-hidden="true" />
-      <div className="lid lid-bot" aria-hidden="true" />
-      <div className="seam" aria-hidden="true" />
-    </main>
+    <PageShell title={title} summary={summary}>
+      <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 20 }}>
+        {entries.map((entry, i) => (
+          <li key={entry.id} id={entry.id} className="rise" style={{ animationDelay: `${BASE_DELAY + 0.15 + i * 0.08}s` }}>
+            <EntryCard entry={entry} />
+          </li>
+        ))}
+      </ol>
+    </PageShell>
   );
 }
 
