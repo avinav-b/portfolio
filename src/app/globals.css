@@ -378,6 +378,87 @@ body {
   outline: none;
 }
 
+/* Skills: install terminal */
+.term {
+  display: flex;
+  flex-direction: column;
+}
+.entry.term:hover {
+  transform: none;
+}
+.term-bar {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--edge);
+}
+.term-tab,
+.term-copy {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition:
+    background-color 80ms linear,
+    color 80ms linear;
+}
+.term-tab.on {
+  color: var(--fg);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.term-copy {
+  margin-left: auto;
+  color: var(--tag);
+}
+.term-tab:hover,
+.term-tab:focus-visible,
+.term-copy:hover,
+.term-copy:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+}
+.term-body {
+  margin: 0;
+  padding: 20px clamp(16px, 3vw, 24px);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--fg-soft);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Skills: bye-bye pipeline */
+.chain {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  font-size: 13px;
+}
+.chain a,
+.chain-self {
+  padding: 4px 10px;
+  border: 1px solid var(--edge-strong);
+  text-decoration: none;
+}
+.chain-self {
+  color: var(--muted);
+  border-style: dashed;
+}
+.space .chain a:hover,
+.space .chain a:focus-visible {
+  background: #fff;
+  color: #000;
+  outline: none;
+}
+
 .rise {
   opacity: 0;
   animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;

@@ -122,6 +122,10 @@ export default function Landing() {
                 <span className="caret accent" aria-hidden="true">&gt;</span>
                 <span>projects</span>
               </Link>
+              <Link className="opt" href="/skills" onClick={leave("/skills")}>
+                <span className="caret accent" aria-hidden="true">&gt;</span>
+                <span>skills</span>
+              </Link>
             </nav>
           </div>
         </div>
@@ -221,6 +225,7 @@ export default function Landing() {
               <SiteLink href={RESUME_HREF} label="resume" />
               <SiteLink href="/experiences" label="experiences" />
               <SiteLink href="/projects" label="projects" />
+              <SiteLink href="/skills" label="skills" />
             </nav>
             <nav
               className="rv"

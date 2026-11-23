@@ -192,3 +192,88 @@ export const PROJECTS: Entry[] = [
     github: "https://github.com/avinav-b/FPGA_human_benchmark",
   },
 ];
+
+export const SKILLS_REPO = "https://github.com/avinav-b/skills";
+
+export type Skill = {
+  id: string;
+  trigger: string;
+  summary: string;
+  steps: string[];
+  // Other skills this one runs, in order.
+  chains?: string[];
+};
+
+export const SKILL_INSTALLS = [
+  {
+    agent: "claude code",
+    lines: ["claude plugin marketplace add avinav-b/skills", "claude plugin install avinav-skills@avinav-b"],
+  },
+  {
+    agent: "codex",
+    lines: ["codex plugin marketplace add avinav-b/skills", "codex plugin add avinav-skills@avinav-b"],
+  },
+  { agent: "anything else", lines: ["npx skills@latest add avinav-b/skills"] },
+];
+
+export const SKILLS: Skill[] = [
+  {
+    id: "dig-deep",
+    trigger: '"dig deep"',
+    summary:
+      "For investigations and research. The agent keeps going until every open question is settled, and only then reports back.",
+    steps: [
+      "A question counts as settled only when something settles it: code it ran, output it saw, a primary source, a file and line.",
+      "\"Likely\" and \"should\" mean it's still open, so it goes back and checks.",
+      "Fans out to subagents for different angles, then re-checks anything the conclusion depends on.",
+      "Leads with the answer and gives the evidence for each finding.",
+    ],
+  },
+  {
+    id: "human-pr-description",
+    trigger: '"human PR"',
+    summary:
+      "Writes PR descriptions for the person reviewing. They cover what behaves or looks different and why, not which lines changed.",
+    steps: [
+      "UI changes get before and after screenshots.",
+      "Behaviour changes get diagrams or animations, drawn in HTML and embedded as images when markdown can't show them.",
+      "Short, direct text, using bullets or tables where they read better than prose.",
+    ],
+  },
+  {
+    id: "pr-session",
+    trigger: '"PR session"',
+    summary:
+      "A fresh subagent critiques the PR, the agent responds, and a new critic takes the next round. It stops when they converge.",
+    steps: [
+      "Each critic sees only the diff, what the change is for, and the earlier findings with their answers. It never sees the author's reasoning.",
+      "Each finding gets either the smallest fix or a rebuttal with evidence. It never agrees just to end the loop.",
+      "Done when a fresh critic raises nothing new that holds up. Anything still disputed after two rounds goes to me with both sides.",
+    ],
+  },
+  {
+    id: "blind-ui-comparison",
+    trigger: '"blind UI comparison"',
+    summary:
+      "Puts a screen next to the same screen in the best comparable apps and iterates until blind critics agree mine is the best.",
+    steps: [
+      "Sources real comparisons: platform defaults and the strongest competitors, doing the same job in the same state.",
+      "Strips branding, gives every image a neutral letter, and reshuffles the letters each round.",
+      "Three fresh critics score every screen out of 10 for UI/UX and aesthetics, and the issues most of them raise get fixed.",
+      "It's done when all three critics rank mine first on both scores. A tie doesn't count.",
+    ],
+  },
+  {
+    id: "bye-bye",
+    trigger: "/bye-bye",
+    summary:
+      "From problem to open PR without stopping, for when I'm not watching. It chains the other skills end to end.",
+    steps: [
+      "Investigates with dig-deep and stops if the premise turns out to be wrong.",
+      "Makes the smallest fix on a new branch and proves it with tests.",
+      "Runs pr-session against the diff, then opens the PR with a human-pr-description.",
+      "It can branch, commit, push and open a PR. It can't merge or touch production.",
+    ],
+    chains: ["dig-deep", "pr-session", "human-pr-description"],
+  },
+];
